@@ -1,0 +1,232 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+  ARTIST
+}
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  passwordHash  String
+  role          Role         @default(ADMIN)
+  isActive      Boolean      @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime     @default(now())
+  createdById   String?
+  createdBy     User?        @relation("UserCreatedBy", fields: [createdById], references: [id])
+  createdUsers  User[]       @relation("UserCreatedBy")
+  permissions   Permission[]
+  auditLogs     AuditLog[]
+  sessions      Session[]
+  accounts      Account[]
+
+  @@index([email])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Permission {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource String
+  actions  String[]
+
+  @@unique([userId, resource])
+  @@index([userId])
+}
+
+model Artist {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  firstName   String
+  lastName    String
+  bio         String?        @db.Text
+  birthYear   Int?
+  deathYear   Int?
+  nationality String?
+  featured    Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  images      ArtistImage[]
+  works       Work[]
+  projects    ProjectArtist[]
+  publications Publication[] @relation("PublicationArtists")
+
+  @@index([slug])
+  @@index([lastName])
+}
+
+model ArtistImage {
+  id       String @id @default(cuid())
+  artistId String
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  url      String
+  alt      String @default("")
+  order    Int    @default(0)
+
+  @@index([artistId])
+}
+
+model Work {
+  id          String  @id @default(cuid())
+  artistId    String
+  artist      Artist  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  title       String
+  year        Int?
+  medium      String?
+  dimensions  String?
+  imageUrl    String?
+  description String? @db.Text
+
+  @@index([artistId])
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  title       String
+  description String?         @db.Text
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String          @default("active")
+  featured    Boolean         @default(false)
+  artists     ProjectArtist[]
+
+  @@index([slug])
+}
+
+model ProjectArtist {
+  projectId String
+  artistId  String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  artist    Artist  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, artistId])
+}
+
+model Publication {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  authors     String[]
+  publishedAt DateTime?
+  coverUrl    String?
+  description String?  @db.Text
+  externalUrl String?
+  artists     Artist[] @relation("PublicationArtists")
+
+  @@index([slug])
+  @@index([publishedAt])
+}
+
+model NewsItem {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  body        String    @db.Text
+  publishedAt DateTime  @default(now())
+  image       String?
+
+  @@index([slug])
+  @@index([publishedAt])
+}
+
+model MerchandiseItem {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  title       String
+  description String? @db.Text
+  price       Decimal @db.Decimal(10, 2)
+  imageUrl    String?
+  externalUrl String?
+  inStock     Boolean @default(true)
+
+  @@index([slug])
+}
+
+model Page {
+  id    String @id @default(cuid())
+  slug  String @unique
+  title String
+  body  String @db.Text
+
+  @@index([slug])
+}
+
+model Subscriber {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  firstName   String?
+  lastName    String?
+  mailchimpId String?
+  syncedAt    DateTime?
+
+  @@index([email])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

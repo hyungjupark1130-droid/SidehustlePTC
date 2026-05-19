@@ -1,0 +1,23 @@
+.next/
+node_modules/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+dist/
+
+# Build artifacts
+tsconfig.tsbuildinfo
+
+# Large zip files
+*.zip
+
+# Runtime databases
+ruvector.db
+
+# Audit logs
+audits/
+
+# Claude/RuFlo internal state
+.claude-flow/
