@@ -153,7 +153,7 @@ export function ArtistPreviewPanel({ artist }: { artist: ArtistSummary | null })
     {
       date: new Date(data.createdAt),
       label: 'Joined Side Hustle Practice',
-      type: 'joined',
+      type: 'joined' as const,
     },
     ...data.publications
       .filter((p) => p.publishedAt)
