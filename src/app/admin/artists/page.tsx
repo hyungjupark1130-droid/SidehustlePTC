@@ -46,7 +46,7 @@ export default async function AdminArtistsPage() {
             <tr className="text-left border-b border-black">
               <th className="pb-3 text-xs tracking-widest uppercase font-medium opacity-60">Name</th>
               <th className="pb-3 text-xs tracking-widest uppercase font-medium opacity-60">
-                Nationality
+                Based In
               </th>
               <th className="pb-3 text-xs tracking-widest uppercase font-medium opacity-60">
                 Featured

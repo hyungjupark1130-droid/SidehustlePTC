@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { renderMarkdown } from '@/lib/renderMarkdown';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,8 +41,8 @@ export default async function NewsItemPage({ params }: Props) {
           <Image src={getImageUrl(item.image)} alt={item.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 800px" />
         </div>
       )}
-      <div className="font-body font-light text-base leading-relaxed max-w-2xl space-y-6">
-        {item.body.split('\n\n').map((p, i) => <p key={i}>{p}</p>)}
+      <div className="max-w-2xl space-y-6">
+        {renderMarkdown(item.body)}
       </div>
     </main>
   );

@@ -16,12 +16,6 @@ export function ContactSection() {
           >
             Contact
           </h2>
-          <address className="font-body font-light text-base not-italic leading-relaxed">
-            Side Hustle<br />
-            123 Artist Way<br />
-            London, E1 6AN<br />
-            United Kingdom
-          </address>
         </div>
         
         <div className="flex flex-col gap-8 md:mt-auto">

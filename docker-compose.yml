@@ -29,6 +29,9 @@ services:
       MAILCHIMP_API_SERVER: ${MAILCHIMP_API_SERVER:-us1}
     depends_on:
       - db
+    volumes:
+      - uploads_data:/app/public/uploads
 
 volumes:
   postgres_data:
+  uploads_data:

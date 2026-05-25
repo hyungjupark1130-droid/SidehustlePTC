@@ -11,9 +11,9 @@ import { NewsletterSection } from '@/components/sections/NewsletterSection';
 import { ContactSection } from '@/components/sections/ContactSection';
 
 export const metadata = {
-  title: 'Side Hustle — Research-Based Artist Organization',
+  title: 'Side Hustle — Organic Forms of Togetherness and Sustainable Cultural Production',
   description:
-    'Side Hustle is a research-based artist organization dedicated to archiving and presenting contemporary artistic practice.',
+    'Side Hustle is an organic form of togetherness and sustainable cultural production dedicated to archiving and presenting contemporary artistic practice.',
 };
 
 export const dynamic = 'force-dynamic';

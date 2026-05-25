@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface ArtistImage {
@@ -38,6 +38,11 @@ export function ArtistForm({ artist }: { artist?: ArtistData }) {
     featured: artist?.featured ?? false,
   });
 
+  const [images, setImages] = useState<ArtistImage[]>(artist?.images ?? []);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState('');
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   const set = (k: string, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,6 +74,50 @@ export function ArtistForm({ artist }: { artist?: ArtistData }) {
     router.refresh();
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!artist?.id) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageUploading(true);
+    setImageError('');
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const uploadRes = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+      const uploadData = await uploadRes.json();
+      if (!uploadRes.ok) {
+        setImageError(uploadData.error ?? 'Upload failed.');
+        return;
+      }
+      const addRes = await fetch(`/api/admin/artists/${artist.id}/images`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: uploadData.url, alt: '', order: images.length }),
+      });
+      const newImage = await addRes.json();
+      if (!addRes.ok) {
+        setImageError(newImage.error ?? 'Failed to save image.');
+        return;
+      }
+      setImages((prev) => [...prev, newImage]);
+    } catch {
+      setImageError('Upload failed.');
+    } finally {
+      setImageUploading(false);
+      if (imageInputRef.current) imageInputRef.current.value = '';
+    }
+  };
+
+  const handleImageDelete = async (imageId: string) => {
+    if (!artist?.id) return;
+    const res = await fetch(`/api/admin/artists/${artist.id}/images/${imageId}`, {
+      method: 'DELETE',
+    });
+    if (res.ok) {
+      setImages((prev) => prev.filter((img) => img.id !== imageId));
+    }
+  };
+
   const inputCls =
     'w-full border-b border-black py-2 text-sm font-body bg-transparent focus:outline-none';
   const labelCls = 'block text-xs tracking-widest uppercase font-body font-medium mb-1';
@@ -96,7 +145,7 @@ export function ArtistForm({ artist }: { artist?: ArtistData }) {
       </div>
 
       <div>
-        <label className={labelCls}>Nationality</label>
+        <label className={labelCls}>Based In</label>
         <input
           className={inputCls}
           value={form.nationality}
@@ -149,6 +198,54 @@ export function ArtistForm({ artist }: { artist?: ArtistData }) {
           Featured in archive preview
         </label>
       </div>
+
+      {/* Image upload — only available when editing an existing artist */}
+      {artist?.id && (
+        <div>
+          <label className={labelCls}>Photos</label>
+          {images.length > 0 && (
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {images.map((img) => (
+                <div key={img.id} className="relative group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={img.url}
+                    alt={img.alt || 'Artist photo'}
+                    className="w-full aspect-square object-cover border border-black/10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleImageDelete(img.id)}
+                    className="absolute top-1 right-1 bg-black text-white text-xs px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp,image/avif"
+            onChange={handleImageUpload}
+            disabled={imageUploading}
+            className="block text-xs font-body text-black/60 file:mr-3 file:py-1.5 file:px-3 file:border file:border-black file:text-xs file:uppercase file:tracking-widest file:bg-transparent file:cursor-pointer hover:file:bg-black hover:file:text-white file:transition-colors"
+          />
+          {imageUploading && (
+            <p className="text-xs font-body opacity-40 mt-1">Uploading…</p>
+          )}
+          {imageError && (
+            <p className="text-xs font-body border border-black px-3 py-2 mt-2">{imageError}</p>
+          )}
+        </div>
+      )}
+
+      {!artist?.id && (
+        <p className="text-xs font-body opacity-40 border border-black/20 px-3 py-2">
+          Save the artist first, then you can upload photos.
+        </p>
+      )}
 
       {error && (
         <p className="text-xs font-body border border-black px-3 py-2">{error}</p>

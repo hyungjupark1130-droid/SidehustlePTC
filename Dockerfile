@@ -45,6 +45,9 @@ COPY --from=builder /app/public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
+# Ensure the uploads directory exists and is writable by the nextjs user
+RUN mkdir -p /app/public/uploads && chown -R nextjs:nodejs /app/public/uploads
+
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./

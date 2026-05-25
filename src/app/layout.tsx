@@ -21,25 +21,25 @@ const bodyFont = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Side Hustle — Research-Based Artist Organization',
+    default: 'Side Hustle — Organic Forms of Togetherness and Sustainable Cultural Production',
     template: '%s | Side Hustle',
   },
   description:
-    'Side Hustle is a research-based artist organization dedicated to archiving and presenting contemporary artistic practice.',
+    'Side Hustle is an organic form of togetherness and sustainable cultural production dedicated to archiving and presenting contemporary artistic practice.',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: process.env.NEXTAUTH_URL ?? 'https://sidehustle.art',
     siteName: 'Side Hustle',
-    title: 'Side Hustle — Research-Based Artist Organization',
+    title: 'Side Hustle — Organic Forms of Togetherness and Sustainable Cultural Production',
     description:
-      'Side Hustle is a research-based artist organization dedicated to archiving and presenting contemporary artistic practice.',
+      'Side Hustle is an organic form of togetherness and sustainable cultural production dedicated to archiving and presenting contemporary artistic practice.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Side Hustle — Research-Based Artist Organization',
+    title: 'Side Hustle — Organic Forms of Togetherness and Sustainable Cultural Production',
     description:
-      'Side Hustle is a research-based artist organization dedicated to archiving and presenting contemporary artistic practice.',
+      'Side Hustle is an organic form of togetherness and sustainable cultural production dedicated to archiving and presenting contemporary artistic practice.',
   },
 };
 

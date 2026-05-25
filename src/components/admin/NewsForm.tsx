@@ -99,6 +99,9 @@ export function NewsForm({ item }: { item?: NewsItem }) {
           onChange={(e) => set('body', e.target.value)}
           required
         />
+        <p className="text-xs font-body opacity-40 mt-1">
+          Markdown supported: # Heading, ## Sub-heading, **bold**, *italic*, [link text](url), ![caption](image-url). Separate paragraphs with a blank line.
+        </p>
       </div>
 
       <div>

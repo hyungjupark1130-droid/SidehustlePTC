@@ -17,7 +17,7 @@ export function HeroSection() {
         transition={{ delay: 1.1, duration: 0.6, ease: 'easeOut' }}
         className="text-xs tracking-[0.3em] uppercase font-body font-light text-center"
       >
-        Research-Based Artist Organization
+        Organic Forms of Togetherness and Sustainable Cultural Production
       </motion.p>
     </section>
   );
