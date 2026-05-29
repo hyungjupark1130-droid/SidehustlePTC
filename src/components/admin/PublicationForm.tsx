@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { RichTextEditor } from './RichTextEditor';
 
 interface PublicationData {
   id: string;
@@ -12,9 +13,6 @@ interface PublicationData {
   description: string | null;
   externalUrl: string | null;
   coverUrl: string | null;
-  fontSize: string | null;
-  lineHeight: string | null;
-  textAlign: string | null;
 }
 
 function toDateInput(date: Date | null | undefined): string {
@@ -36,9 +34,6 @@ export function PublicationForm({ publication }: { publication?: PublicationData
     publishedAt: toDateInput(publication?.publishedAt),
     description: publication?.description ?? '',
     externalUrl: publication?.externalUrl ?? '',
-    fontSize: publication?.fontSize ?? 'base',
-    lineHeight: publication?.lineHeight ?? 'relaxed',
-    textAlign: publication?.textAlign ?? 'left',
   });
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
@@ -142,74 +137,10 @@ export function PublicationForm({ publication }: { publication?: PublicationData
 
       <div>
         <label className={labelCls}>Description</label>
-        <textarea
-          className="w-full border border-black py-2 px-3 text-sm font-body bg-transparent focus:outline-none resize-y min-h-[160px]"
-          value={form.description}
-          onChange={(e) => set('description', e.target.value)}
+        <RichTextEditor
+          defaultValue={form.description}
+          onChange={(html) => set('description', html)}
         />
-      </div>
-
-      <div>
-        <label className={labelCls}>Typography</label>
-        <div className="flex flex-col gap-3 mt-2">
-          <div>
-            <p className="font-body text-[10px] tracking-widest uppercase opacity-40 mb-1.5">Font Size</p>
-            <div className="flex gap-1 flex-wrap">
-              {[['sm', 'Small'], ['base', 'Base'], ['lg', 'Large'], ['xl', 'X-Large']].map(([val, display]) => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => set('fontSize', val)}
-                  className={`px-3 py-1 text-[10px] font-body tracking-widest uppercase border transition-colors ${
-                    form.fontSize === val
-                      ? 'bg-black text-white border-black'
-                      : 'bg-transparent text-black border-black/30 hover:border-black'
-                  }`}
-                >
-                  {display}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="font-body text-[10px] tracking-widest uppercase opacity-40 mb-1.5">Line Height</p>
-            <div className="flex gap-1 flex-wrap">
-              {[['tight', 'Tight'], ['normal', 'Normal'], ['relaxed', 'Relaxed'], ['loose', 'Loose']].map(([val, display]) => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => set('lineHeight', val)}
-                  className={`px-3 py-1 text-[10px] font-body tracking-widest uppercase border transition-colors ${
-                    form.lineHeight === val
-                      ? 'bg-black text-white border-black'
-                      : 'bg-transparent text-black border-black/30 hover:border-black'
-                  }`}
-                >
-                  {display}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="font-body text-[10px] tracking-widest uppercase opacity-40 mb-1.5">Alignment</p>
-            <div className="flex gap-1">
-              {[['left', 'Left'], ['center', 'Center'], ['right', 'Right']].map(([val, display]) => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => set('textAlign', val)}
-                  className={`px-3 py-1 text-[10px] font-body tracking-widest uppercase border transition-colors ${
-                    form.textAlign === val
-                      ? 'bg-black text-white border-black'
-                      : 'bg-transparent text-black border-black/30 hover:border-black'
-                  }`}
-                >
-                  {display}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
       <div>

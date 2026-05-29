@@ -21,13 +21,13 @@ export default async function PublicationDetailPage({ params }: Props) {
   });
   if (!pub) notFound();
 
-  const fontSizes: Record<string, string> = { sm: '0.875rem', base: '1rem', lg: '1.125rem', xl: '1.25rem' };
-  const lineHeights: Record<string, string> = { tight: '1.25', normal: '1.5', relaxed: '1.625', loose: '2' };
-  const descriptionStyle = {
-    fontSize: fontSizes[pub.fontSize ?? ''] ?? '1rem',
-    lineHeight: lineHeights[pub.lineHeight ?? ''] ?? '1.625',
-    textAlign: (pub.textAlign === 'center' ? 'center' : pub.textAlign === 'right' ? 'right' : 'left') as 'left' | 'center' | 'right',
-  };
+  // Wrap plain-text descriptions (no HTML tags) in paragraphs for uniform rendering
+  const isHtml = pub.description?.trimStart().startsWith('<');
+  const descriptionHtml = pub.description
+    ? isHtml
+      ? pub.description
+      : pub.description.split('\n\n').map((p) => `<p>${p}</p>`).join('')
+    : null;
 
   return (
     <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-4xl">
@@ -44,7 +44,12 @@ export default async function PublicationDetailPage({ params }: Props) {
           <h1 className="font-display font-black leading-none mb-4" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>{pub.title}</h1>
           {pub.authors.length > 0 && <p className="font-body font-light text-sm mb-2">{pub.authors.join(', ')}</p>}
           {pub.publishedAt && <p className="font-body font-light text-xs tracking-widest uppercase opacity-40 mb-8">{new Date(pub.publishedAt).getFullYear()}</p>}
-          {pub.description && <p className="font-body font-light mb-8" style={descriptionStyle}>{pub.description}</p>}
+          {descriptionHtml && (
+            <div
+              className="publication-body font-body font-light mb-8"
+              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+            />
+          )}
           {pub.externalUrl && (
             <a href={pub.externalUrl} target="_blank" rel="noopener noreferrer" className="font-body font-light text-xs tracking-widest uppercase underline underline-offset-4">
               View / Purchase →
