@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
-import { checkPermission } from '@/lib/admin/permissions';
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
 const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
 const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 
 export async function POST(req: NextRequest) {
-  // Allow any authenticated admin user to upload images
-  const { allowed } = await checkPermission('news', 'update');
-  if (!allowed) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  const session = await auth();
+  if (!session?.user?.email) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
+  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+  if (!user || !user.isActive) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  if (user.expiresAt && user.expiresAt < new Date()) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
 
   const formData = await req.formData();
   const file = formData.get('file') as File | null;
