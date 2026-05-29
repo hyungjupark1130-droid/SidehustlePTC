@@ -10,6 +10,7 @@ const schema = z.object({
   price: z.number().nonnegative().optional(),
   externalUrl: z.string().optional(),
   inStock: z.boolean().optional(),
+  imageUrl: z.string().nullable().optional(),
 });
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {

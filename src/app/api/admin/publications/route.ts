@@ -10,6 +10,7 @@ const schema = z.object({
   publishedAt: z.string().optional(),
   description: z.string().optional(),
   externalUrl: z.string().optional(),
+  coverUrl: z.string().nullable().optional(),
 });
 
 function slugify(title: string) {
@@ -39,6 +40,7 @@ export async function POST(req: NextRequest) {
       publishedAt: parsed.data.publishedAt ? new Date(parsed.data.publishedAt) : null,
       description: parsed.data.description ?? null,
       externalUrl: parsed.data.externalUrl || null,
+      coverUrl: parsed.data.coverUrl ?? null,
     },
   });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface MerchandiseData {
@@ -11,12 +11,16 @@ interface MerchandiseData {
   price: { toString(): string } | number | string;
   externalUrl: string | null;
   inStock: boolean;
+  imageUrl: string | null;
 }
 
 export function MerchandiseForm({ item }: { item?: MerchandiseData }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
+  const [imageUrl, setImageUrl] = useState(item?.imageUrl ?? '');
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     title: item?.title ?? '',
@@ -27,6 +31,25 @@ export function MerchandiseForm({ item }: { item?: MerchandiseData }) {
   });
 
   const set = (k: string, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? 'Upload failed.'); return; }
+      setImageUrl(data.url);
+    } catch {
+      setError('Upload failed.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const inputCls =
     'w-full border-b border-black py-2 text-sm font-body bg-transparent focus:outline-none';
@@ -39,6 +62,7 @@ export function MerchandiseForm({ item }: { item?: MerchandiseData }) {
     const payload = {
       ...form,
       price: form.price ? parseFloat(form.price) : 0,
+      imageUrl: imageUrl || null,
     };
 
     const url = item ? `/api/admin/merchandise/${item.id}` : '/api/admin/merchandise';
@@ -115,6 +139,36 @@ export function MerchandiseForm({ item }: { item?: MerchandiseData }) {
         </label>
       </div>
 
+      <div>
+        <label className={labelCls}>Image</label>
+        {imageUrl && (
+          <div className="mb-3 relative inline-block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imageUrl}
+              alt="Preview"
+              className="max-h-48 border border-black/10 object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => { setImageUrl(''); if (fileRef.current) fileRef.current.value = ''; }}
+              className="absolute top-1 right-1 bg-black text-white text-xs px-1.5 py-0.5 hover:bg-black/70"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp,image/avif"
+          onChange={handleFileChange}
+          disabled={uploading}
+          className="block text-xs font-body text-black/60 file:mr-3 file:py-1.5 file:px-3 file:border file:border-black file:text-xs file:uppercase file:tracking-widest file:bg-transparent file:cursor-pointer hover:file:bg-black hover:file:text-white file:transition-colors"
+        />
+        {uploading && <p className="text-xs font-body opacity-40 mt-1">Uploading…</p>}
+      </div>
+
       {error && (
         <p className="text-xs font-body border border-black px-3 py-2">{error}</p>
       )}
@@ -122,7 +176,7 @@ export function MerchandiseForm({ item }: { item?: MerchandiseData }) {
       <div className="flex gap-4">
         <button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || uploading}
           className="px-4 py-2 bg-black text-white text-xs tracking-widest uppercase font-body hover:bg-black/80 transition-colors disabled:opacity-50"
         >
           {isPending ? 'Saving...' : item ? 'Save Changes' : 'Create Item'}

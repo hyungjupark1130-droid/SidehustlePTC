@@ -10,6 +10,7 @@ const schema = z.object({
   publishedAt: z.string().optional(),
   description: z.string().optional(),
   externalUrl: z.string().optional(),
+  coverUrl: z.string().nullable().optional(),
 });
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -25,6 +26,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       ...parsed.data,
       publishedAt: parsed.data.publishedAt ? new Date(parsed.data.publishedAt) : undefined,
       externalUrl: parsed.data.externalUrl !== undefined ? (parsed.data.externalUrl || null) : undefined,
+      coverUrl: parsed.data.coverUrl !== undefined ? (parsed.data.coverUrl || null) : undefined,
     },
   });
 

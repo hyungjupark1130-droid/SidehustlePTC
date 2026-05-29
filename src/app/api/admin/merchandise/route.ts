@@ -10,6 +10,7 @@ const schema = z.object({
   price: z.number().nonnegative(),
   externalUrl: z.string().optional(),
   inStock: z.boolean().optional(),
+  imageUrl: z.string().nullable().optional(),
 });
 
 function slugify(title: string) {
@@ -39,6 +40,7 @@ export async function POST(req: NextRequest) {
       price: parsed.data.price,
       externalUrl: parsed.data.externalUrl ?? null,
       inStock: parsed.data.inStock ?? true,
+      imageUrl: parsed.data.imageUrl ?? null,
     },
   });
 
