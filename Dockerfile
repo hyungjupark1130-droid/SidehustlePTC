@@ -53,9 +53,8 @@ RUN mkdir -p /app/public/uploads && chown -R nextjs:nodejs /app/public/uploads
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy prisma CLI and engines so we can run db push at container startup
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
+# Copy startup script that applies additive SQL migrations then starts the server
+COPY scripts/migrate-and-start.js ./migrate-and-start.js
 
 USER nextjs
 
@@ -67,4 +66,4 @@ ENV HOSTNAME "0.0.0.0"
 
 # Note: server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["sh", "-c", "node ./node_modules/prisma/build/index.js db push --skip-generate && node server.js"]
+CMD ["node", "migrate-and-start.js"]
