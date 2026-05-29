@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import type { ArtistSummary } from '@/lib/types';
 import { ArtistPreviewPanel } from '@/components/ArtistPreviewPanel';
+import { useArchive } from '@/components/ArchiveProvider';
 
 interface ArchiveViewProps {
   artists: ArtistSummary[];
@@ -29,6 +30,7 @@ interface ArtistRowProps {
 
 function ArtistRow({ artist, isSelected, onSelect }: ArtistRowProps) {
   const router = useRouter();
+  const { closeArchive } = useArchive();
   const prefersReduced = useReducedMotion();
   const [hovered, setHovered] = useState(false);
   const clickCountRef = useRef(0);
@@ -44,6 +46,7 @@ function ArtistRow({ artist, isSelected, onSelect }: ArtistRowProps) {
     } else {
       clearTimeout(timerRef.current);
       clickCountRef.current = 0;
+      closeArchive();
       router.push(`/archive/${artist.slug}`);
     }
   };

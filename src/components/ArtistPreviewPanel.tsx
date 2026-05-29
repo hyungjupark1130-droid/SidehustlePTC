@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ArtistSummary } from '@/lib/types';
 import { getImageUrl } from '@/lib/getImageUrl';
+import { useArchive } from '@/components/ArchiveProvider';
 
 interface ArtistPreviewData {
   id: string;
@@ -105,6 +106,7 @@ function HorizontalTimeline({ events }: { events: TimelineEvent[] }) {
 }
 
 export function ArtistPreviewPanel({ artist }: { artist: ArtistSummary | null }) {
+  const { closeArchive } = useArchive();
   const [data, setData] = useState<ArtistPreviewData | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -221,6 +223,7 @@ export function ArtistPreviewPanel({ artist }: { artist: ArtistSummary | null })
         <div>
           <Link
             href={`/archive/${data.slug}`}
+            onClick={closeArchive}
             className="font-body font-light text-xs tracking-widest uppercase underline underline-offset-4 hover:tracking-[0.2em] transition-all duration-300"
           >
             View Profile →
