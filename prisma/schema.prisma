@@ -138,6 +138,9 @@ model Publication {
   coverUrl    String?
   description String?  @db.Text
   externalUrl String?
+  fontSize    String?
+  lineHeight  String?
+  textAlign   String?
   artists     Artist[] @relation("PublicationArtists")
 
   @@index([slug])

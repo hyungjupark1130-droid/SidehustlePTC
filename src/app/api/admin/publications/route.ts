@@ -11,6 +11,9 @@ const schema = z.object({
   description: z.string().optional(),
   externalUrl: z.string().optional(),
   coverUrl: z.string().nullable().optional(),
+  fontSize: z.string().optional(),
+  lineHeight: z.string().optional(),
+  textAlign: z.string().optional(),
 });
 
 function slugify(title: string) {
@@ -41,6 +44,9 @@ export async function POST(req: NextRequest) {
       description: parsed.data.description ?? null,
       externalUrl: parsed.data.externalUrl || null,
       coverUrl: parsed.data.coverUrl ?? null,
+      fontSize: parsed.data.fontSize ?? null,
+      lineHeight: parsed.data.lineHeight ?? null,
+      textAlign: parsed.data.textAlign ?? null,
     },
   });
 

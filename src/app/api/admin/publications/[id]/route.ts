@@ -11,6 +11,9 @@ const schema = z.object({
   description: z.string().optional(),
   externalUrl: z.string().optional(),
   coverUrl: z.string().nullable().optional(),
+  fontSize: z.string().nullable().optional(),
+  lineHeight: z.string().nullable().optional(),
+  textAlign: z.string().nullable().optional(),
 });
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -27,6 +30,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       publishedAt: parsed.data.publishedAt ? new Date(parsed.data.publishedAt) : undefined,
       externalUrl: parsed.data.externalUrl !== undefined ? (parsed.data.externalUrl || null) : undefined,
       coverUrl: parsed.data.coverUrl !== undefined ? (parsed.data.coverUrl || null) : undefined,
+      fontSize: parsed.data.fontSize !== undefined ? (parsed.data.fontSize || null) : undefined,
+      lineHeight: parsed.data.lineHeight !== undefined ? (parsed.data.lineHeight || null) : undefined,
+      textAlign: parsed.data.textAlign !== undefined ? (parsed.data.textAlign || null) : undefined,
     },
   });
 

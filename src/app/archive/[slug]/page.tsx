@@ -5,6 +5,84 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
 
+interface TimelineEvent {
+  date: Date;
+  label: string;
+  href?: string;
+}
+
+function formatTimelineDate(d: Date) {
+  return d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+}
+
+function ArtistTimeline({ events }: { events: TimelineEvent[] }) {
+  if (events.length === 0) return null;
+  return (
+    <section className="pt-16 pb-8 border-t border-black/10">
+      <p className="font-body font-medium text-[10px] tracking-widest uppercase opacity-30 mb-8">Timeline</p>
+      <div className="overflow-x-auto">
+        <div style={{ minWidth: `${Math.max(events.length * 140, 400)}px` }}>
+          {/* Labels above the line (even-indexed events) */}
+          <div className="flex">
+            {events.map((ev, i) => (
+              <div key={i} className="flex-1 flex flex-col justify-end items-center px-2 pb-1" style={{ minHeight: 72 }}>
+                {i % 2 === 0 && (
+                  <>
+                    {ev.href ? (
+                      <Link href={ev.href} className="font-body font-light text-[10px] leading-tight text-center hover:underline underline-offset-2 line-clamp-2">
+                        {ev.label}
+                      </Link>
+                    ) : (
+                      <span className="font-body font-light text-[10px] leading-tight text-center line-clamp-2">{ev.label}</span>
+                    )}
+                    <span className="font-body font-light text-[9px] tracking-widest uppercase opacity-40 text-center leading-none mt-1.5">
+                      {formatTimelineDate(ev.date)}
+                    </span>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Dot row with horizontal line */}
+          <div className="relative flex" style={{ height: 44 }}>
+            <div className="absolute left-0 right-0 h-px bg-black/15" style={{ top: 21 }} />
+            {events.map((_, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center relative z-10">
+                <div className="w-px bg-black/20" style={{ height: 16, visibility: i % 2 === 0 ? 'visible' : 'hidden' }} />
+                <div className="w-2.5 h-2.5 rounded-full border border-black bg-white flex-shrink-0" />
+                <div className="w-px bg-black/20" style={{ height: 16, visibility: i % 2 !== 0 ? 'visible' : 'hidden' }} />
+              </div>
+            ))}
+          </div>
+
+          {/* Labels below the line (odd-indexed events) */}
+          <div className="flex">
+            {events.map((ev, i) => (
+              <div key={i} className="flex-1 flex flex-col justify-start items-center px-2 pt-1" style={{ minHeight: 72 }}>
+                {i % 2 !== 0 && (
+                  <>
+                    <span className="font-body font-light text-[9px] tracking-widest uppercase opacity-40 text-center leading-none mb-1.5">
+                      {formatTimelineDate(ev.date)}
+                    </span>
+                    {ev.href ? (
+                      <Link href={ev.href} className="font-body font-light text-[10px] leading-tight text-center hover:underline underline-offset-2 line-clamp-2">
+                        {ev.label}
+                      </Link>
+                    ) : (
+                      <span className="font-body font-light text-[10px] leading-tight text-center line-clamp-2">{ev.label}</span>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 interface Props {
   params: { slug: string };
 }
@@ -52,6 +130,16 @@ export default async function ArtistDetailPage({ params }: Props) {
 
   const name = `${artist.firstName} ${artist.lastName}`;
   const dates = [artist.birthYear, artist.deathYear].filter(Boolean).join('–');
+
+  const timelineEvents: TimelineEvent[] = [
+    { date: new Date(artist.createdAt), label: 'Joined Side Hustle Practice' },
+    ...artist.publications
+      .filter((p: any) => p.publishedAt)
+      .map((p: any) => ({ date: new Date(p.publishedAt), label: p.title, href: `/publications/${p.slug}` })),
+    ...artist.projects
+      .filter(({ project }: any) => project.startDate)
+      .map(({ project }: any) => ({ date: new Date(project.startDate), label: project.title, href: `/projects/${project.slug}` })),
+  ].sort((a, b) => a.date.getTime() - b.date.getTime());
   
   return (
     <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
@@ -94,20 +182,6 @@ export default async function ArtistDetailPage({ params }: Props) {
             </div>
           )}
           
-          {artist.publications.length > 0 && (
-            <div>
-              <h2 className="font-body font-medium text-xs tracking-widest uppercase mb-4">Related Publications</h2>
-              <ul className="flex flex-col gap-2">
-                {artist.publications.map((pub: any) => (
-                  <li key={pub.id}>
-                    <Link href={`/publications/${pub.slug}`} className="font-body font-light hover:underline underline-offset-4">
-                      {pub.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
 
         {/* Right Column: Images & Works */}
@@ -161,6 +235,42 @@ export default async function ArtistDetailPage({ params }: Props) {
           )}
         </div>
       </div>
+
+      <ArtistTimeline events={timelineEvents} />
+
+      {artist.publications.length > 0 && (
+        <section className="pt-16 border-t border-black/10">
+          <h2 className="font-body font-medium text-xs tracking-widest uppercase mb-8">Related Articles & Publications</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {artist.publications.map((pub: any) => (
+              <Link key={pub.id} href={`/publications/${pub.slug}`} className="group flex flex-col gap-3">
+                {pub.coverUrl && (
+                  <div className="relative w-full aspect-[3/2] bg-black/5 overflow-hidden">
+                    <Image
+                      src={getImageUrl(pub.coverUrl)}
+                      alt={pub.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  </div>
+                )}
+                <div>
+                  <h3 className="font-body font-medium text-sm leading-tight group-hover:underline underline-offset-2">{pub.title}</h3>
+                  {pub.publishedAt && (
+                    <p className="font-body font-light text-xs tracking-widest uppercase opacity-40 mt-1">
+                      {new Date(pub.publishedAt).getFullYear()}
+                    </p>
+                  )}
+                  {pub.authors?.length > 0 && (
+                    <p className="font-body font-light text-xs opacity-60 mt-0.5">{pub.authors.join(', ')}</p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
