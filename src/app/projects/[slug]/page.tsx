@@ -36,11 +36,18 @@ export default async function ProjectDetailPage({ params }: Props) {
         <span className="font-body font-light text-xs tracking-widest uppercase opacity-40">{project.status}</span>
       </header>
 
-      {project.description && (
-        <div className="font-body font-light text-base leading-relaxed max-w-2xl mb-16 space-y-4">
-          {project.description.split('\n\n').map((p, i) => <p key={i}>{p}</p>)}
-        </div>
-      )}
+      {project.description && (() => {
+        const isHtml = project.description!.trimStart().startsWith('<');
+        const html = isHtml
+          ? project.description!
+          : project.description!.split('\n\n').map((p) => `<p>${p}</p>`).join('');
+        return (
+          <div
+            className="publication-body font-body font-light text-base max-w-2xl mb-16"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        );
+      })()}
 
       {project.artists.length > 0 && (
         <section className="border-t border-black pt-12">

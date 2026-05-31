@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { RichTextEditor } from './RichTextEditor';
 
 interface ProjectData {
   id: string;
@@ -106,10 +107,9 @@ export function ProjectForm({ project }: { project?: ProjectData }) {
 
       <div>
         <label className={labelCls}>Description</label>
-        <textarea
-          className="w-full border border-black py-2 px-3 text-sm font-body bg-transparent focus:outline-none resize-y min-h-[160px]"
-          value={form.description}
-          onChange={(e) => set('description', e.target.value)}
+        <RichTextEditor
+          defaultValue={form.description}
+          onChange={(html) => set('description', html)}
         />
       </div>
 
