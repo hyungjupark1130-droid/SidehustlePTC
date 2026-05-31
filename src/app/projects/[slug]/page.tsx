@@ -67,7 +67,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                   </div>
                 )}
                 <p className="font-body font-light text-xs">
-                  {artist.firstName} <span className="font-medium">{artist.lastName}</span>
+                  {artist.firstName} {artist.lastName}
                 </p>
               </Link>
             ))}

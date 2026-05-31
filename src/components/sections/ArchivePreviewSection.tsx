@@ -55,8 +55,7 @@ function ArtistThumbnail({ artist }: { artist: ArtistPreview }) {
           </div>
         )}
         <p className="font-body font-light text-xs leading-tight tracking-wide">
-          {artist.firstName}{' '}
-          <span className="font-medium">{artist.lastName}</span>
+          {artist.firstName}{' '}{artist.lastName}
         </p>
         {artist.nationality && (
           <p className="font-body font-light text-xs tracking-widest uppercase opacity-50">
