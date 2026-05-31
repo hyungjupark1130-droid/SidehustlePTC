@@ -45,8 +45,11 @@ COPY --from=builder /app/public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Ensure the uploads directory exists and is writable by the nextjs user
+# Ensure the default uploads directory exists and is writable by the nextjs user.
+# For persistent uploads across deploys, mount a Railway volume at /data/uploads
+# and set the UPLOADS_DIR=/data/uploads environment variable in Railway settings.
 RUN mkdir -p /app/public/uploads && chown -R nextjs:nodejs /app/public/uploads
+RUN mkdir -p /data/uploads && chown -R nextjs:nodejs /data/uploads
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing

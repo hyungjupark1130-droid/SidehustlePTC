@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'File extension not allowed' }, { status: 400 });
   }
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const uploadDir = join(process.cwd(), 'public', 'uploads');
+  const uploadDir = process.env.UPLOADS_DIR ?? join(process.cwd(), 'public', 'uploads');
 
   await mkdir(uploadDir, { recursive: true });
   await writeFile(join(uploadDir, filename), Buffer.from(bytes));
