@@ -86,7 +86,7 @@ export default async function HomePage() {
           lastName: a.lastName,
           nationality: a.nationality,
           featured: a.featured,
-          imageUrl: getImageUrl(a.images[0]?.url),
+          imageUrl: a.images[0]?.url ? getImageUrl(a.images[0].url) : null,
           imageAlt: a.images[0]?.alt ?? `${a.firstName} ${a.lastName}`,
         }))}
       />

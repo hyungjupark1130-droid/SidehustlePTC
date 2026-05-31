@@ -13,7 +13,7 @@ interface ArtistPreview {
   lastName: string;
   nationality?: string | null;
   featured: boolean;
-  imageUrl: string;
+  imageUrl: string | null;
   imageAlt: string;
 }
 
@@ -32,19 +32,28 @@ function ArtistThumbnail({ artist }: { artist: ArtistPreview }) {
       onMouseLeave={() => setHovered(false)}
     >
       <Link href={`/archive/${artist.slug}`}>
-        <div className="relative w-full aspect-square overflow-hidden mb-3">
-          <Image
-            src={artist.imageUrl}
-            alt={artist.imageAlt}
-            fill
-            className="object-cover"
-            style={{
-              filter: hovered && !prefersReduced ? 'none' : 'grayscale(100%)',
-              transition: 'filter 0.4s ease',
-            }}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-          />
-        </div>
+        {artist.imageUrl && (
+          <div className="relative w-full aspect-square overflow-hidden mb-3">
+            <Image
+              src={artist.imageUrl}
+              alt={artist.imageAlt}
+              fill
+              className="object-cover"
+              style={{
+                filter: hovered && !prefersReduced ? 'none' : 'grayscale(100%)',
+                transition: 'filter 0.4s ease',
+              }}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            />
+          </div>
+        )}
+        {!artist.imageUrl && (
+          <div className="w-full aspect-square mb-3 border border-black/10 flex items-end p-3">
+            <span className="font-display font-black text-4xl leading-none opacity-10">
+              {artist.lastName[0]}
+            </span>
+          </div>
+        )}
         <p className="font-body font-light text-xs leading-tight tracking-wide">
           {artist.firstName}{' '}
           <span className="font-medium">{artist.lastName}</span>

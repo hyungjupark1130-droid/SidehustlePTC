@@ -188,15 +188,12 @@ export default async function ArtistDetailPage({ params }: Props) {
         <div className="lg:col-span-8 flex flex-col gap-16">
           {artist.images.map((img: any) => (
             <figure key={img.id} className="w-full">
-              <div className="relative w-full aspect-[4/3] bg-black/5 mb-3">
-                <Image
-                  src={getImageUrl(img.url)}
-                  alt={img.alt || name}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 1024px) 100vw, 66vw"
-                />
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={getImageUrl(img.url)}
+                alt={img.alt || name}
+                className="w-full h-auto block mb-3"
+              />
               {img.alt && (
                 <figcaption className="font-body font-light text-xs text-black/60">
                   {img.alt}
@@ -212,15 +209,12 @@ export default async function ArtistDetailPage({ params }: Props) {
                 {artist.works.map((work: any) => (
                   <article key={work.id}>
                     {work.imageUrl && (
-                      <div className="relative w-full aspect-square bg-black/5 mb-4">
-                        <Image
-                          src={getImageUrl(work.imageUrl)}
-                          alt={work.title}
-                          fill
-                          className="object-contain"
-                          sizes="(max-width: 640px) 100vw, 33vw"
-                        />
-                      </div>
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={getImageUrl(work.imageUrl)}
+                        alt={work.title}
+                        className="w-full h-auto block mb-4"
+                      />
                     )}
                     <h3 className="font-body font-medium text-sm leading-tight italic">
                       {work.title}{work.year ? `, ${work.year}` : ''}
