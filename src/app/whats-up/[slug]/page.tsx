@@ -23,7 +23,7 @@ export default async function NewsItemPage({ params }: Props) {
   const date = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(item.publishedAt));
 
   return (
-    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-3xl">
+    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-3xl mx-auto text-center">
       <Link href="/whats-up" className="font-body font-light text-xs tracking-widest uppercase hover:underline underline-offset-4 mb-12 block">
         ← What&apos;s Up
       </Link>

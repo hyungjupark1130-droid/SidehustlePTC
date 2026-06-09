@@ -22,7 +22,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   if (!project) notFound();
 
   return (
-    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-6xl">
+    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-6xl mx-auto text-center">
       <Link href="/projects" className="font-body font-light text-xs tracking-widest uppercase hover:underline underline-offset-4 mb-12 block">
         ← Projects
       </Link>
