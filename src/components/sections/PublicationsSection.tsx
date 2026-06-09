@@ -36,7 +36,7 @@ export function PublicationsSection({ publications }: PublicationsSectionProps) 
           No publications yet.
         </p>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(14rem,18rem))] justify-center gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {publications.map((pub) => {
             const href = pub.externalUrl || `/publications/${pub.slug}`;
             const isExternal = !!pub.externalUrl;
