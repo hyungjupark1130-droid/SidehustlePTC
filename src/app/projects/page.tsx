@@ -8,7 +8,7 @@ export default async function ProjectsPage() {
   const projects = await prisma.project.findMany({ orderBy: { startDate: 'desc' } });
 
   return (
-    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 text-center">
+    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12">
       <h1
         className="font-display font-black text-black leading-none mb-16"
         style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}

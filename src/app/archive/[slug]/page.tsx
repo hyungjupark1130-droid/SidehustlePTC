@@ -145,14 +145,14 @@ export default async function ArtistDetailPage({ params }: Props) {
   
   return (
     <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
-      <header className="mb-16 text-center">
+      <header className="mb-16">
         <h1
           className="font-display font-black leading-none mb-4"
           style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
         >
           {name}
         </h1>
-        <div className="flex justify-center gap-4 font-body font-light text-sm tracking-widest uppercase opacity-60">
+        <div className="flex gap-4 font-body font-light text-sm tracking-widest uppercase opacity-60">
           {dates && <span>{dates}</span>}
           {artist.nationality && <span>{artist.nationality}</span>}
         </div>
@@ -160,7 +160,7 @@ export default async function ArtistDetailPage({ params }: Props) {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
         {/* Left Column: Bio & Metadata */}
-        <div className={`${hasRightContent ? 'lg:col-span-5' : 'lg:col-start-3 lg:col-span-8'} flex flex-col gap-12`}>
+        <div className={`${hasRightContent ? 'lg:col-span-7' : 'lg:col-span-12'} flex flex-col gap-12`}>
           {artist.bio && (
             <div className="font-body font-light leading-relaxed text-base">
               {artist.bio.split('\n\n').map((paragraph: any, i: any) => (
@@ -187,7 +187,7 @@ export default async function ArtistDetailPage({ params }: Props) {
         </div>
 
         {/* Right Column: Images & Works */}
-        {hasRightContent && (<div className="lg:col-span-7 flex flex-col gap-16">
+        {hasRightContent && (<div className="lg:col-span-5 flex flex-col gap-16">
           {artist.images.map((img: any) => (
             <figure key={img.id} className="w-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}

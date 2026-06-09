@@ -22,7 +22,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   if (!project) notFound();
 
   return (
-    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-6xl mx-auto text-center">
+    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-6xl mx-auto">
       <Link href="/projects" className="font-body font-light text-xs tracking-widest uppercase hover:underline underline-offset-4 mb-12 block">
         ← Projects
       </Link>
@@ -43,7 +43,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           : project.description!.split('\n\n').map((p) => `<p>${p}</p>`).join('');
         return (
           <div
-            className="publication-body font-body font-light text-base max-w-2xl mb-16"
+            className="publication-body font-body font-light text-base mb-16"
             dangerouslySetInnerHTML={{ __html: html }}
           />
         );

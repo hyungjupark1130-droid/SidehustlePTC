@@ -30,7 +30,7 @@ export default async function PublicationDetailPage({ params }: Props) {
     : null;
 
   return (
-    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-4xl mx-auto text-center">
+    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-5xl mx-auto">
       <Link href="/publications" className="font-body font-light text-xs tracking-widest uppercase hover:underline underline-offset-4 mb-12 block">
         ← Publications
       </Link>

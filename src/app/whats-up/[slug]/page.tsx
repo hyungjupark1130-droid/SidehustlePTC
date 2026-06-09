@@ -23,7 +23,7 @@ export default async function NewsItemPage({ params }: Props) {
   const date = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(item.publishedAt));
 
   return (
-    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-3xl mx-auto text-center">
+    <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-5xl mx-auto">
       <Link href="/whats-up" className="font-body font-light text-xs tracking-widest uppercase hover:underline underline-offset-4 mb-12 block">
         ← What&apos;s Up
       </Link>
@@ -41,7 +41,7 @@ export default async function NewsItemPage({ params }: Props) {
           <Image src={getImageUrl(item.image)} alt={item.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 800px" />
         </div>
       )}
-      <div className="max-w-2xl space-y-6">
+      <div className="space-y-6">
         {renderMarkdown(item.body)}
       </div>
     </main>
