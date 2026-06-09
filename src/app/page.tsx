@@ -91,7 +91,7 @@ export default async function HomePage() {
         }))}
       />
 
-      <AboutSection body={aboutPage?.body ?? null} />
+      {/* <AboutSection body={aboutPage?.body ?? null} /> */}
 
       <PublicationsSection
         publications={publications.map((p) => ({

@@ -56,7 +56,9 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                   </h3>
                   {project.description && (
                     <p className="font-body font-light text-sm leading-relaxed max-w-2xl">
-                      {project.description}
+                      {project.description.length > 160
+                        ? project.description.slice(0, 160).trimEnd() + '…'
+                        : project.description}
                     </p>
                   )}
                 </div>

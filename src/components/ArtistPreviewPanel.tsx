@@ -31,7 +31,7 @@ function formatDate(date: Date) {
   return date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
 }
 
-function HorizontalTimeline({ events }: { events: TimelineEvent[] }) {
+function HorizontalTimeline({ events, onLinkClick }: { events: TimelineEvent[]; onLinkClick?: () => void }) {
   if (events.length === 0) return null;
   const n = events.length;
 
@@ -88,6 +88,7 @@ function HorizontalTimeline({ events }: { events: TimelineEvent[] }) {
             {event.href ? (
               <Link
                 href={event.href}
+                onClick={onLinkClick}
                 className="font-body font-light text-[10px] leading-tight hover:underline underline-offset-2 text-center line-clamp-2 block"
               >
                 {event.label}
@@ -182,7 +183,7 @@ export function ArtistPreviewPanel({ artist }: { artist: ArtistSummary | null })
         {/* Portrait + name side by side */}
         <div className="flex gap-5 items-start">
           {imageUrl && (
-            <Link href={`/archive/${data.slug}`} tabIndex={-1} className="flex-shrink-0">
+            <Link href={`/archive/${data.slug}`} onClick={closeArchive} tabIndex={-1} className="flex-shrink-0">
               <div className="relative w-24 h-32 overflow-hidden bg-black/5">
                 <Image
                   src={imageUrl}
@@ -196,7 +197,7 @@ export function ArtistPreviewPanel({ artist }: { artist: ArtistSummary | null })
           )}
 
           <div className="flex flex-col justify-start pt-1 min-w-0">
-            <Link href={`/archive/${data.slug}`} className="hover:underline underline-offset-4">
+            <Link href={`/archive/${data.slug}`} onClick={closeArchive} className="hover:underline underline-offset-4">
               <h2 className="font-display font-black text-2xl leading-tight">
                 {data.firstName} {data.lastName}
               </h2>
@@ -216,7 +217,7 @@ export function ArtistPreviewPanel({ artist }: { artist: ArtistSummary | null })
 
         {/* Horizontal timeline */}
         <div className="border-t border-black/10 pt-6">
-          <HorizontalTimeline events={timeline} />
+          <HorizontalTimeline events={timeline} onLinkClick={closeArchive} />
         </div>
 
         {/* View profile */}
