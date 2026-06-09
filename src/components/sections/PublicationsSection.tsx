@@ -36,12 +36,12 @@ export function PublicationsSection({ publications }: PublicationsSectionProps) 
           No publications yet.
         </p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {publications.map((pub) => {
             const href = pub.externalUrl || `/publications/${pub.slug}`;
             const isExternal = !!pub.externalUrl;
             return (
-              <article key={pub.id}>
+              <article key={pub.id} className="text-center">
                 <Link
                   href={href}
                   target={isExternal ? '_blank' : undefined}

@@ -20,11 +20,11 @@ export default async function PublicationsPage() {
       {publications.length === 0 ? (
         <p className="font-body font-light text-sm tracking-widest uppercase">No publications yet.</p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {publications.map((pub) => {
             const href = pub.externalUrl || `/publications/${pub.slug}`;
             return (
-              <article key={pub.id}>
+              <article key={pub.id} className="text-center">
                 <Link href={href} target={pub.externalUrl ? '_blank' : undefined} rel={pub.externalUrl ? 'noopener noreferrer' : undefined} className="block group">
                   {pub.coverUrl && (
                     <div className="relative w-full aspect-[3/4] overflow-hidden mb-4 bg-black/5">
