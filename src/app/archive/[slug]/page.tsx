@@ -131,6 +131,8 @@ export default async function ArtistDetailPage({ params }: Props) {
   const name = `${artist.firstName} ${artist.lastName}`;
   const dates = [artist.birthYear, artist.deathYear].filter(Boolean).join('–');
 
+  const hasRightContent = artist.images.length > 0 || artist.works.length > 0;
+
   const timelineEvents: TimelineEvent[] = [
     { date: new Date(artist.createdAt), label: 'Joined Side Hustle Practice' },
     ...artist.publications
@@ -158,7 +160,7 @@ export default async function ArtistDetailPage({ params }: Props) {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
         {/* Left Column: Bio & Metadata */}
-        <div className="lg:col-span-5 flex flex-col gap-12">
+        <div className={`${hasRightContent ? 'lg:col-span-5' : 'lg:col-span-12'} flex flex-col gap-12`}>
           {artist.bio && (
             <div className="font-body font-light leading-relaxed text-base">
               {artist.bio.split('\n\n').map((paragraph: any, i: any) => (
@@ -185,7 +187,7 @@ export default async function ArtistDetailPage({ params }: Props) {
         </div>
 
         {/* Right Column: Images & Works */}
-        <div className="lg:col-span-7 flex flex-col gap-16">
+        {hasRightContent && (<div className="lg:col-span-7 flex flex-col gap-16">
           {artist.images.map((img: any) => (
             <figure key={img.id} className="w-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -227,7 +229,7 @@ export default async function ArtistDetailPage({ params }: Props) {
               </div>
             </div>
           )}
-        </div>
+        </div>)}
       </div>
 
       <ArtistTimeline events={timelineEvents} />

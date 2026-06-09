@@ -14,6 +14,10 @@ interface WhatsUpSectionProps {
   items: NewsItem[];
 }
 
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',
@@ -73,7 +77,7 @@ export function WhatsUpSection({ items }: WhatsUpSectionProps) {
                 </Link>
               </h3>
               <p className="font-body font-light text-sm leading-relaxed line-clamp-3">
-                {item.body}
+                {stripHtml(item.body)}
               </p>
             </article>
           ))}
