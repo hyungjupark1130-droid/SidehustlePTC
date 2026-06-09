@@ -160,7 +160,7 @@ export default async function ArtistDetailPage({ params }: Props) {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
         {/* Left Column: Bio & Metadata */}
-        <div className={`${hasRightContent ? 'lg:col-span-5' : 'lg:col-span-12'} flex flex-col gap-12`}>
+        <div className={`${hasRightContent ? 'lg:col-span-5' : 'lg:col-span-7'} flex flex-col gap-12`}>
           {artist.bio && (
             <div className="font-body font-light leading-relaxed text-base">
               {artist.bio.split('\n\n').map((paragraph: any, i: any) => (
@@ -237,7 +237,7 @@ export default async function ArtistDetailPage({ params }: Props) {
       {artist.publications.length > 0 && (
         <section className="pt-16 border-t border-black/10">
           <h2 className="font-body font-medium text-xs tracking-widest uppercase mb-8">Related Articles & Publications</h2>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(14rem,18rem))] justify-center gap-8">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(14rem,18rem))] justify-start gap-8">
             {artist.publications.map((pub: any) => (
               <Link key={pub.id} href={`/publications/${pub.slug}`} className="group flex flex-col gap-3">
                 {pub.coverUrl && (
