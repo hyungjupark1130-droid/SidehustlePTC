@@ -145,14 +145,14 @@ export default async function ArtistDetailPage({ params }: Props) {
   
   return (
     <main className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
-      <header className="mb-16">
-        <h1 
+      <header className="mb-16 text-center">
+        <h1
           className="font-display font-black leading-none mb-4"
           style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
         >
           {name}
         </h1>
-        <div className="flex gap-4 font-body font-light text-sm tracking-widest uppercase opacity-60">
+        <div className="flex justify-center gap-4 font-body font-light text-sm tracking-widest uppercase opacity-60">
           {dates && <span>{dates}</span>}
           {artist.nationality && <span>{artist.nationality}</span>}
         </div>

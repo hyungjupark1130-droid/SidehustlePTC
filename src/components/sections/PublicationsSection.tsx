@@ -25,7 +25,7 @@ export function PublicationsSection({ publications }: PublicationsSectionProps) 
     >
       <h2
         id="publications-heading"
-        className="font-display font-black text-black leading-none mb-16"
+        className="font-display font-black text-black leading-none mb-16 text-center"
         style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
       >
         Publications
