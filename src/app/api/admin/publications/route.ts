@@ -14,6 +14,7 @@ const schema = z.object({
   fontSize: z.string().optional(),
   lineHeight: z.string().optional(),
   textAlign: z.string().optional(),
+  featuredInWhatsUp: z.boolean().optional(),
 });
 
 function slugify(title: string) {
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest) {
       fontSize: parsed.data.fontSize ?? null,
       lineHeight: parsed.data.lineHeight ?? null,
       textAlign: parsed.data.textAlign ?? null,
+      featuredInWhatsUp: parsed.data.featuredInWhatsUp ?? false,
     },
   });
 

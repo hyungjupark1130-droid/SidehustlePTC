@@ -19,11 +19,15 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 async function getHomeData() {
-  const [newsItems, projects, featuredArtists, publications, merchandise, aboutPage] =
+  const [newsItems, whatsUpPublications, projects, featuredArtists, publications, merchandise, aboutPage] =
     await Promise.all([
       prisma.newsItem.findMany({
         orderBy: { publishedAt: 'desc' },
         take: 4,
+      }),
+      prisma.publication.findMany({
+        where: { featuredInWhatsUp: true },
+        orderBy: { publishedAt: 'desc' },
       }),
       prisma.project.findMany({
         where: { featured: true },
@@ -50,11 +54,11 @@ async function getHomeData() {
       prisma.page.findUnique({ where: { slug: 'about' } }),
     ]);
 
-  return { newsItems, projects, featuredArtists, publications, merchandise, aboutPage };
+  return { newsItems, whatsUpPublications, projects, featuredArtists, publications, merchandise, aboutPage };
 }
 
 export default async function HomePage() {
-  const { newsItems, projects, featuredArtists, publications, merchandise, aboutPage } =
+  const { newsItems, whatsUpPublications, projects, featuredArtists, publications, merchandise, aboutPage } =
     await getHomeData();
 
   return (
@@ -62,11 +66,28 @@ export default async function HomePage() {
       <HeroSection />
 
       <WhatsUpSection
-        items={newsItems.map((n) => ({
-          ...n,
-          image: n.image ? getImageUrl(n.image) : null,
-          publishedAt: n.publishedAt,
-        }))}
+        items={[
+          ...newsItems.map((n) => ({
+            id: n.id,
+            slug: n.slug,
+            title: n.title,
+            excerpt: n.body,
+            date: n.publishedAt,
+            image: n.image ? getImageUrl(n.image) : null,
+            href: `/whats-up/${n.slug}`,
+            type: 'news' as const,
+          })),
+          ...whatsUpPublications.map((p) => ({
+            id: p.id,
+            slug: p.slug,
+            title: p.title,
+            excerpt: p.description ?? '',
+            date: p.publishedAt ?? new Date(0),
+            image: p.coverUrl ? getImageUrl(p.coverUrl) : null,
+            href: `/publications/${p.slug}`,
+            type: 'publication' as const,
+          })),
+        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 4)}
       />
 
       <ProjectsSection

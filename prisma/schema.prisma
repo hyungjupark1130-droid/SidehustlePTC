@@ -130,18 +130,19 @@ model ProjectArtist {
 }
 
 model Publication {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  authors     String[]
-  publishedAt DateTime?
-  coverUrl    String?
-  description String?  @db.Text
-  externalUrl String?
-  fontSize    String?
-  lineHeight  String?
-  textAlign   String?
-  artists     Artist[] @relation("PublicationArtists")
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  title             String
+  authors           String[]
+  publishedAt       DateTime?
+  coverUrl          String?
+  description       String?  @db.Text
+  externalUrl       String?
+  fontSize          String?
+  lineHeight        String?
+  textAlign         String?
+  featuredInWhatsUp Boolean  @default(false)
+  artists           Artist[] @relation("PublicationArtists")
 
   @@index([slug])
   @@index([publishedAt])

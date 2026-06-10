@@ -1,17 +1,19 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-interface NewsItem {
+export interface WhatsUpItem {
   id: string;
   slug: string;
   title: string;
-  body: string;
-  publishedAt: Date;
+  excerpt: string;
+  date: Date;
   image?: string | null;
+  href: string;
+  type: 'news' | 'publication';
 }
 
 interface WhatsUpSectionProps {
-  items: NewsItem[];
+  items: WhatsUpItem[];
 }
 
 function stripHtml(html: string): string {
@@ -50,7 +52,7 @@ export function WhatsUpSection({ items }: WhatsUpSectionProps) {
           {items.map((item) => (
             <article key={item.id}>
               {item.image && (
-                <Link href={`/whats-up/${item.slug}`} className="block mb-6 overflow-hidden">
+                <Link href={item.href} className="block mb-6 overflow-hidden">
                   <div className="relative w-full aspect-[4/3] overflow-hidden">
                     <Image
                       src={item.image}
@@ -62,22 +64,29 @@ export function WhatsUpSection({ items }: WhatsUpSectionProps) {
                   </div>
                 </Link>
               )}
-              <time
-                dateTime={new Date(item.publishedAt).toISOString()}
-                className="block font-body font-light text-xs tracking-widest uppercase mb-3"
-              >
-                {formatDate(item.publishedAt)}
-              </time>
+              <div className="flex items-center gap-3 mb-3">
+                <time
+                  dateTime={new Date(item.date).toISOString()}
+                  className="block font-body font-light text-xs tracking-widest uppercase"
+                >
+                  {formatDate(item.date)}
+                </time>
+                {item.type === 'publication' && (
+                  <span className="font-body font-light text-xs tracking-widest uppercase border border-black/30 px-1.5 py-0.5">
+                    Publication
+                  </span>
+                )}
+              </div>
               <h3 className="font-display font-black text-xl md:text-2xl leading-tight mb-3">
                 <Link
-                  href={`/whats-up/${item.slug}`}
+                  href={item.href}
                   className="hover:underline underline-offset-4"
                 >
                   {item.title}
                 </Link>
               </h3>
               <p className="font-body font-light text-sm leading-relaxed line-clamp-3">
-                {stripHtml(item.body)}
+                {stripHtml(item.excerpt)}
               </p>
             </article>
           ))}

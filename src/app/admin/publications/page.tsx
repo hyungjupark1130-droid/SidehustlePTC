@@ -54,6 +54,9 @@ export default async function AdminPublicationsPage() {
                 Published
               </th>
               <th className="pb-3 text-xs tracking-widest uppercase font-medium opacity-60">
+                What&apos;s Up
+              </th>
+              <th className="pb-3 text-xs tracking-widest uppercase font-medium opacity-60">
                 Actions
               </th>
             </tr>
@@ -74,6 +77,15 @@ export default async function AdminPublicationsPage() {
                   {pub.publishedAt
                     ? new Date(pub.publishedAt).toLocaleDateString('en-GB')
                     : '—'}
+                </td>
+                <td className="py-3">
+                  {pub.featuredInWhatsUp ? (
+                    <span className="inline-block text-xs tracking-widest uppercase font-body bg-black text-white px-2 py-0.5">
+                      Featured
+                    </span>
+                  ) : (
+                    <span className="opacity-30 text-xs font-body">—</span>
+                  )}
                 </td>
                 <td className="py-3">
                   <div className="flex items-center gap-3">

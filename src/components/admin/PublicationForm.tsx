@@ -13,6 +13,7 @@ interface PublicationData {
   description: string | null;
   externalUrl: string | null;
   coverUrl: string | null;
+  featuredInWhatsUp?: boolean;
 }
 
 function toDateInput(date: Date | null | undefined): string {
@@ -27,6 +28,8 @@ export function PublicationForm({ publication }: { publication?: PublicationData
   const [coverUrl, setCoverUrl] = useState(publication?.coverUrl ?? '');
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const [featuredInWhatsUp, setFeaturedInWhatsUp] = useState(publication?.featuredInWhatsUp ?? false);
 
   const [form, setForm] = useState({
     title: publication?.title ?? '',
@@ -72,6 +75,7 @@ export function PublicationForm({ publication }: { publication?: PublicationData
         .map((a) => a.trim())
         .filter(Boolean),
       coverUrl: coverUrl || null,
+      featuredInWhatsUp,
     };
 
     const url = publication
@@ -171,6 +175,24 @@ export function PublicationForm({ publication }: { publication?: PublicationData
           className="block text-xs font-body text-black/60 file:mr-3 file:py-1.5 file:px-3 file:border file:border-black file:text-xs file:uppercase file:tracking-widest file:bg-transparent file:cursor-pointer hover:file:bg-black hover:file:text-white file:transition-colors"
         />
         {uploading && <p className="text-xs font-body opacity-40 mt-1">Uploading…</p>}
+      </div>
+
+      <div className="border border-black/20 px-4 py-3 flex items-start gap-3">
+        <input
+          id="featuredInWhatsUp"
+          type="checkbox"
+          checked={featuredInWhatsUp}
+          onChange={(e) => setFeaturedInWhatsUp(e.target.checked)}
+          className="mt-0.5 h-4 w-4 cursor-pointer accent-black"
+        />
+        <div>
+          <label htmlFor="featuredInWhatsUp" className="block text-xs tracking-widest uppercase font-body font-medium cursor-pointer">
+            Feature in What&apos;s Up
+          </label>
+          <p className="text-xs font-body opacity-40 mt-0.5">
+            This publication will appear in the What&apos;s Up section on the homepage.
+          </p>
+        </div>
       </div>
 
       {error && (

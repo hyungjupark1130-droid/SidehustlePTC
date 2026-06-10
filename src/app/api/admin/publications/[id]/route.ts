@@ -14,6 +14,7 @@ const schema = z.object({
   fontSize: z.string().nullable().optional(),
   lineHeight: z.string().nullable().optional(),
   textAlign: z.string().nullable().optional(),
+  featuredInWhatsUp: z.boolean().optional(),
 });
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -33,6 +34,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       fontSize: parsed.data.fontSize !== undefined ? (parsed.data.fontSize || null) : undefined,
       lineHeight: parsed.data.lineHeight !== undefined ? (parsed.data.lineHeight || null) : undefined,
       textAlign: parsed.data.textAlign !== undefined ? (parsed.data.textAlign || null) : undefined,
+      featuredInWhatsUp: parsed.data.featuredInWhatsUp !== undefined ? parsed.data.featuredInWhatsUp : undefined,
     },
   });
 
