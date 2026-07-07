@@ -38,8 +38,19 @@ export async function POST(req: NextRequest) {
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const uploadDir = process.env.UPLOADS_DIR ?? join(process.cwd(), 'public', 'uploads');
 
-  await mkdir(uploadDir, { recursive: true });
-  await writeFile(join(uploadDir, filename), Buffer.from(bytes));
+  try {
+    await mkdir(uploadDir, { recursive: true });
+    await writeFile(join(uploadDir, filename), Buffer.from(bytes));
+  } catch (err: unknown) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === 'EACCES' || code === 'EPERM') {
+      return NextResponse.json(
+        { error: 'Upload directory is not writable. Check UPLOADS_DIR permissions.' },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json({ error: 'Failed to save file.' }, { status: 500 });
+  }
 
   return NextResponse.json({ url: `/uploads/${filename}` });
 }

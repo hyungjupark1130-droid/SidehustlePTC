@@ -32,7 +32,7 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl su-exec
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
@@ -56,17 +56,16 @@ RUN mkdir -p /data/uploads && chown -R nextjs:nodejs /data/uploads
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy startup script that applies additive SQL migrations then starts the server
+# Copy startup scripts
 COPY scripts/migrate-and-start.js ./migrate-and-start.js
+COPY scripts/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
 
-USER nextjs
-
+# Container starts as root so the entrypoint can chown the mounted volume,
+# then drops to the nextjs user via su-exec before running the server.
 EXPOSE 3000
 
 ENV PORT 3000
-# set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
 
-# Note: server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "migrate-and-start.js"]
+CMD ["/app/docker-entrypoint.sh"]
