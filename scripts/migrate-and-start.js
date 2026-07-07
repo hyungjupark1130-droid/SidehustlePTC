@@ -7,6 +7,7 @@ const MIGRATIONS = [
   `ALTER TABLE "Publication" ADD COLUMN IF NOT EXISTS "fontSize" TEXT`,
   `ALTER TABLE "Publication" ADD COLUMN IF NOT EXISTS "lineHeight" TEXT`,
   `ALTER TABLE "Publication" ADD COLUMN IF NOT EXISTS "textAlign" TEXT`,
+  `ALTER TABLE "Publication" ADD COLUMN IF NOT EXISTS "featuredInWhatsUp" BOOLEAN NOT NULL DEFAULT FALSE`,
 ];
 
 async function run() {
