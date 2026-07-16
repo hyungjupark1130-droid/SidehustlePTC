@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
@@ -154,7 +154,31 @@ export function RichTextEditor({
 }) {
   const colorRef = useRef<HTMLInputElement>(null);
   const highlightRef = useRef<HTMLInputElement>(null);
-  const imageUrlRef = useRef<HTMLInputElement>(null);
+  const imageFileRef = useRef<HTMLInputElement>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Uploads a dropped/pasted/selected image file the same way the cover-image
+  // uploader does, so images actually persist as served /uploads URLs instead
+  // of a data: URL or whatever path was on the editor's own machine.
+  const uploadImageFile = async (file: File): Promise<string | null> => {
+    setUploadingImage(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error ?? 'Image upload failed.');
+        return null;
+      }
+      return data.url as string;
+    } catch {
+      alert('Image upload failed.');
+      return null;
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const editor = useEditor({
     extensions: [
@@ -174,6 +198,32 @@ export function RichTextEditor({
     ],
     content: defaultValue,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    editorProps: {
+      handlePaste: (_view, event) => {
+        const files = Array.from(event.clipboardData?.files ?? []).filter((f) =>
+          f.type.startsWith('image/')
+        );
+        if (files.length === 0) return false;
+        event.preventDefault();
+        files.forEach(async (file) => {
+          const url = await uploadImageFile(file);
+          if (url) editor?.chain().focus().setImage({ src: url }).run();
+        });
+        return true;
+      },
+      handleDrop: (_view, event) => {
+        const files = Array.from(event.dataTransfer?.files ?? []).filter((f) =>
+          f.type.startsWith('image/')
+        );
+        if (files.length === 0) return false;
+        event.preventDefault();
+        files.forEach(async (file) => {
+          const url = await uploadImageFile(file);
+          if (url) editor?.chain().focus().setImage({ src: url }).run();
+        });
+        return true;
+      },
+    },
   });
 
   if (!editor) return null;
@@ -216,8 +266,13 @@ export function RichTextEditor({
     }
   };
 
-  const insertImage = () => {
-    const url = prompt('Image URL:');
+  const insertImage = () => imageFileRef.current?.click();
+
+  const handleImageFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const url = await uploadImageFile(file);
     if (url) editor.chain().focus().setImage({ src: url }).run();
   };
 
@@ -369,8 +424,15 @@ export function RichTextEditor({
 
         {sep}
 
-        <button type="button" className={act(false)}
-          onClick={insertImage}>+ Img</button>
+        <button type="button" className={act(false)} disabled={uploadingImage}
+          onClick={insertImage}>{uploadingImage ? 'Uploading…' : '+ Img'}</button>
+        <input
+          ref={imageFileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp,image/avif"
+          onChange={handleImageFileSelected}
+          className="hidden"
+        />
         {editor.isActive('image') && (
           <>
             {[['left','Img L'],['center','Img C'],['right','Img R']].map(([v, l]) => (
